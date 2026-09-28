@@ -1,0 +1,1063 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LinkVault — Catatan, Tautan & Kuis</title>
+    <meta name="description" content="LinkVault: catat keuangan harian, simpan tautan favorit, dan main kuis interaktif dalam satu halaman.">
+    <meta name="theme-color" content="#fffaf5">
+    <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E%F0%9F%90%B1%3C/text%3E%3C/svg%3E">
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;600;700&family=Nunito:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+    <style>
+        :root {
+            --cream: #fffaf5;
+            --white: #ffffff;
+            --brown: #5c4a4a;
+            --brown-soft: #806d6d;
+            --pink: #f7c9d8;
+            --pink-strong: #ee91b2;
+            --mint: #cdebe6;
+            --mint-strong: #73bfb4;
+            --yellow: #f8e7b2;
+            --lavender: #e8ddf4;
+            --danger: #df7e7e;
+            --shadow: 0 12px 35px rgba(101, 77, 77, 0.10);
+            --radius: 24px;
+        }
+
+        * { box-sizing: border-box; }
+
+        html { scroll-behavior: smooth; }
+
+        body {
+            margin: 0;
+            color: var(--brown);
+            background:
+                radial-gradient(circle at 5% 8%, #dff2f0 0 70px, transparent 71px),
+                radial-gradient(circle at 96% 7%, #f8d8e2 0 65px, transparent 66px),
+                radial-gradient(circle at 92% 92%, #dcefed 0 90px, transparent 91px),
+                var(--cream);
+            font-family: "Nunito", sans-serif;
+        }
+
+        button, input, select, textarea { font: inherit; }
+
+        button { cursor: pointer; }
+
+        .container {
+            width: min(1180px, calc(100% - 36px));
+            margin: auto;
+        }
+
+        /* Navbar */
+        header {
+            position: sticky;
+            top: 0;
+            z-index: 20;
+            background: rgba(255, 250, 245, 0.88);
+            backdrop-filter: blur(14px);
+            border-bottom: 1px solid rgba(92, 74, 74, 0.06);
+        }
+
+        .navbar {
+            min-height: 78px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 20px;
+        }
+
+        .brand {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            text-decoration: none;
+            color: var(--brown);
+            font-family: "Baloo 2", sans-serif;
+            font-size: 28px;
+            font-weight: 700;
+        }
+
+        .brand-mark {
+            width: 46px;
+            height: 46px;
+            display: grid;
+            place-items: center;
+            border-radius: 50%;
+            background: linear-gradient(145deg, #fff, #f8d5df);
+            border: 2px solid #e7c4cf;
+            position: relative;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 8px;
+            align-items: center;
+        }
+
+        .nav-links a {
+            color: var(--brown);
+            text-decoration: none;
+            padding: 10px 16px;
+            border-radius: 999px;
+            font-weight: 700;
+            font-size: 14px;
+            transition: background .18s, color .18s;
+        }
+
+        .nav-links a:hover { background: var(--mint); }
+        .nav-links a.active { background: var(--brown); color: #fff; }
+
+        #beranda, #app, #tentang { scroll-margin-top: 92px; }
+
+        :focus-visible {
+            outline: 2.5px solid var(--mint-strong);
+            outline-offset: 2px;
+        }
+
+        .nav-cta {
+            border: 0;
+            padding: 12px 20px;
+            border-radius: 999px;
+            background: var(--brown);
+            color: white;
+            font-weight: 800;
+        }
+
+        /* Hero */
+        .hero {
+            min-height: 430px;
+            display: grid;
+            grid-template-columns: 1.05fr 0.95fr;
+            align-items: center;
+            gap: 40px;
+            padding: 58px 0 42px;
+        }
+
+        .scribble {
+            font-family: "Baloo 2", sans-serif;
+            color: var(--brown-soft);
+            font-size: 18px;
+            transform: rotate(-2deg);
+            margin-bottom: 8px;
+        }
+
+        .hero h1 {
+            font-family: "Baloo 2", sans-serif;
+            font-size: clamp(42px, 5vw, 68px);
+            line-height: 0.98;
+            margin: 0 0 20px;
+            letter-spacing: -1px;
+        }
+
+        .hero h1 span {
+            color: var(--mint-strong);
+            display: block;
+        }
+
+        .hero p {
+            max-width: 590px;
+            color: var(--brown-soft);
+            font-size: 17px;
+            line-height: 1.7;
+            margin-bottom: 26px;
+        }
+
+        .hero-actions {
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            border: 0;
+            border-radius: 999px;
+            padding: 13px 23px;
+            font-weight: 800;
+            transition: 0.2s;
+        }
+
+        .btn:hover { transform: translateY(-2px); }
+
+        .btn-primary { background: var(--brown); color: #fff; }
+        .btn-secondary { background: transparent; color: var(--brown); border: 1.5px solid var(--brown); }
+        .btn-danger { background: var(--danger); color: #fff; }
+
+        /* Pilihan urutan (sort) yang selalu terlihat */
+        .sort-row {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 16px;
+        }
+
+        .sort-label { font-size: 13px; font-weight: 800; color: var(--brown-soft); margin-right: 2px; }
+
+        .chip {
+            border: 1.5px solid #eadfe1;
+            background: #fff;
+            color: var(--brown);
+            border-radius: 999px;
+            padding: 7px 14px;
+            font-size: 13px;
+            font-weight: 800;
+            transition: background .18s, border-color .18s;
+        }
+
+        .chip:hover { border-color: var(--mint-strong); }
+        .chip.active { background: var(--mint); border-color: var(--mint-strong); }
+
+        .quiz-meta { display: flex; justify-content: space-between; align-items: center; }
+        .quiz-timer { font-weight: 800; font-size: 13px; color: var(--pink-strong); }
+        .quiz-timer.low { color: var(--danger); }
+        .delete-confirm-text { line-height: 1.6; margin: 0; }
+
+        .hero-art {
+            min-height: 340px;
+            border-radius: 42% 58% 48% 52%;
+            background:
+                radial-gradient(circle at 50% 45%, #fff 0 95px, transparent 96px),
+                radial-gradient(circle at 70% 30%, #f6cad9 0 85px, transparent 86px),
+                radial-gradient(circle at 28% 35%, #ccece7 0 100px, transparent 101px),
+                #eef7f4;
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: var(--shadow);
+        }
+
+        .cat {
+            width: 210px;
+            height: 190px;
+            border-radius: 48% 48% 43% 43%;
+            background: #fffaf7;
+            border: 4px solid #9a817c;
+            position: relative;
+            box-shadow: 0 12px 20px rgba(92, 74, 74, 0.12);
+        }
+
+        .cat::before, .cat::after {
+            content: "";
+            position: absolute;
+            width: 72px;
+            height: 72px;
+            top: -38px;
+            background: #fffaf7;
+            border: 4px solid #9a817c;
+            z-index: -1;
+        }
+
+        .cat::before { left: 5px; transform: rotate(-28deg); border-radius: 15px 45px 10px 35px; }
+        .cat::after { right: 5px; transform: rotate(28deg); border-radius: 45px 15px 35px 10px; }
+
+        .cat-face {
+            position: absolute;
+            inset: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .eyes { position: absolute; top: 76px; font-size: 22px; letter-spacing: 50px; }
+        .nose { position: absolute; top: 103px; font-size: 20px; }
+        .cheek { position: absolute; width: 28px; height: 16px; border-radius: 50%; background: #f6b8c8; top: 108px; opacity: .75; }
+        .cheek.left { left: 33px; }
+        .cheek.right { right: 33px; }
+
+        .laptop {
+            position: absolute;
+            bottom: 35px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 185px;
+            height: 76px;
+            background: #b8d0e3;
+            border: 4px solid #7f9bb2;
+            border-radius: 12px 12px 5px 5px;
+            z-index: 3;
+            display: grid;
+            place-items: center;
+            color: white;
+            font-size: 25px;
+        }
+
+        .laptop::after {
+            content: "";
+            position: absolute;
+            width: 225px;
+            height: 10px;
+            background: #8fa9ba;
+            bottom: -13px;
+            left: -24px;
+            border-radius: 50%;
+        }
+
+        .mini-card {
+            position: absolute;
+            background: rgba(255,255,255,.92);
+            padding: 15px 18px;
+            border-radius: 18px;
+            box-shadow: var(--shadow);
+            font-size: 13px;
+            line-height: 1.5;
+        }
+
+        .mini-card strong { display: block; font-size: 16px; }
+        .money-card { top: 28px; left: 22px; }
+        .link-card { top: 62px; right: 20px; }
+
+        /* Main app */
+        main { padding: 30px 0 70px; }
+
+        .section-heading {
+            display: flex;
+            align-items: end;
+            justify-content: space-between;
+            gap: 20px;
+            margin-bottom: 18px;
+        }
+
+        .section-heading h2 {
+            font-family: "Baloo 2", sans-serif;
+            font-size: 38px;
+            line-height: 1;
+            margin: 0;
+        }
+
+        .section-heading p { margin: 7px 0 0; color: var(--brown-soft); }
+
+        .tabs {
+            display: flex;
+            gap: 8px;
+            padding: 7px;
+            background: #fff;
+            border-radius: 999px;
+            box-shadow: var(--shadow);
+            width: fit-content;
+            margin-bottom: 20px;
+        }
+
+        .tab-btn {
+            border: 0;
+            background: transparent;
+            color: var(--brown-soft);
+            border-radius: 999px;
+            padding: 11px 18px;
+            font-weight: 800;
+            transition: background .18s, box-shadow .18s, color .18s;
+        }
+
+        .tab-btn.active {
+            background: var(--mint);
+            color: var(--brown);
+            box-shadow: 0 6px 16px rgba(115, 191, 180, .35);
+        }
+
+        .panel { display: none; }
+        .panel.active { display: block; }
+
+        .panel-grid {
+            display: grid;
+            grid-template-columns: 340px 1fr;
+            gap: 20px;
+        }
+
+        .card {
+            background: rgba(255,255,255,.84);
+            border: 1px solid rgba(92,74,74,.07);
+            border-radius: var(--radius);
+            padding: 22px;
+            box-shadow: var(--shadow);
+        }
+
+        .card h3 {
+            font-family: "Baloo 2", sans-serif;
+            font-size: 25px;
+            margin: 0 0 4px;
+        }
+
+        .card-subtitle { color: var(--brown-soft); font-size: 14px; margin: 0 0 18px; }
+
+        .form-group { margin-bottom: 13px; }
+
+        label {
+            display: block;
+            font-weight: 800;
+            font-size: 13px;
+            margin-bottom: 6px;
+        }
+
+        input, select, textarea {
+            width: 100%;
+            border: 1px solid #eadde0;
+            border-radius: 14px;
+            padding: 11px 13px;
+            outline: none;
+            background: #fffdfc;
+            color: var(--brown);
+        }
+
+        input:focus, select:focus, textarea:focus {
+            border-color: var(--mint-strong);
+            box-shadow: 0 0 0 3px rgba(115,191,180,.14);
+        }
+
+        textarea { min-height: 85px; resize: vertical; }
+
+        .summary {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 12px;
+            margin-bottom: 18px;
+        }
+
+        .summary-item {
+            border-radius: 18px;
+            padding: 16px;
+            background: #eef8f5;
+        }
+
+        .summary-item:nth-child(2) { background: #fff0f4; }
+        .summary-item:nth-child(3) { background: #fff8df; }
+
+        .summary-item small { color: var(--brown-soft); }
+        .summary-item strong { display: block; margin-top: 5px; font-size: 20px; }
+
+        .toolbar {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+
+        .toolbar input { flex: 2 1 200px; }
+        .toolbar select { flex: 1 1 150px; }
+
+        .items {
+            display: grid;
+            gap: 10px;
+        }
+
+        .item {
+            display: flex;
+            justify-content: space-between;
+            gap: 15px;
+            align-items: center;
+            padding: 16px;
+            background: #fff;
+            border: 1px solid #f0e6e8;
+            border-radius: 18px;
+            transition: border-color .18s, box-shadow .18s, transform .18s;
+        }
+
+        .item:hover {
+            border-color: var(--mint-strong);
+            box-shadow: 0 10px 24px rgba(101, 77, 77, .08);
+            transform: translateY(-1px);
+        }
+
+        .item-main { min-width: 0; }
+        .item-title { font-weight: 800; margin-bottom: 4px; }
+        .item-meta { color: var(--brown-soft); font-size: 13px; }
+        .amount { font-weight: 900; white-space: nowrap; }
+        .income { color: #5a9d78; }
+        .expense { color: #d77b8e; }
+
+        .badge {
+            display: inline-block;
+            margin-top: 7px;
+            margin-right: 6px;
+            padding: 4px 9px;
+            border-radius: 999px;
+            background: #f5eaf4;
+            font-size: 11px;
+            font-weight: 800;
+        }
+
+        .badge.type-income { background: #e4f5ea; color: #3f7d5a; }
+        .badge.type-expense { background: #fde8ee; color: #b9566b; }
+
+        .actions { display: flex; gap: 7px; flex-wrap: wrap; justify-content: flex-end; }
+
+        .icon-btn {
+            border: 0;
+            background: #f7f1ef;
+            color: var(--brown);
+            border-radius: 10px;
+            padding: 8px 11px;
+            font-weight: 800;
+        }
+
+        .icon-btn.delete { color: var(--danger); }
+
+        .empty {
+            padding: 38px 20px;
+            text-align: center;
+            color: var(--brown-soft);
+            background: #fffdfc;
+            border: 1px dashed #e5d8dc;
+            border-radius: 18px;
+        }
+
+        /* Bookmark */
+        .bookmark-grid {
+            display: grid;
+            grid-template-columns: 340px 1fr;
+            gap: 20px;
+        }
+
+        .bookmark-card {
+            display: flex;
+            gap: 14px;
+            align-items: flex-start;
+        }
+
+        .site-icon {
+            width: 44px;
+            height: 44px;
+            flex: 0 0 44px;
+            display: grid;
+            place-items: center;
+            border-radius: 14px;
+            background: var(--pink);
+            font-weight: 900;
+        }
+
+        .bookmark-card a {
+            color: var(--brown);
+            text-decoration: none;
+            font-weight: 900;
+        }
+
+        .bookmark-card a:hover { color: var(--pink-strong); }
+
+        .bookmark-title { text-decoration: underline !important; text-decoration-color: var(--pink); text-underline-offset: 3px; cursor: pointer; }
+
+        .url a { color: var(--brown-soft); font-weight: 600; text-decoration: none; }
+        .url a:hover { text-decoration: underline; color: var(--pink-strong); }
+
+        a.icon-btn { display: inline-block; text-decoration: none; cursor: pointer; }
+        a.icon-btn.open-link { background: var(--mint); }
+
+        .url {
+            font-size: 12px;
+            color: var(--brown-soft);
+            overflow-wrap: anywhere;
+            margin-top: 3px;
+        }
+
+        .note { font-size: 13px; margin-top: 6px; color: var(--brown-soft); }
+
+        /* Quiz */
+        .quiz-wrap {
+            max-width: 760px;
+            margin: auto;
+        }
+
+        .quiz-start {
+            text-align: center;
+            padding: 38px;
+            background: linear-gradient(145deg, #f0faf8, #fff3f6);
+            border-radius: 28px;
+        }
+
+        .quiz-start .quiz-face {
+            font-size: 58px;
+            margin-bottom: 8px;
+        }
+
+        .quiz-start h3 {
+            font-family: "Baloo 2", sans-serif;
+            font-size: 34px;
+            margin: 0;
+        }
+
+        .quiz-start p { color: var(--brown-soft); }
+
+        .quiz-box { display: none; }
+        .quiz-box.show { display: block; }
+
+        .progress {
+            height: 8px;
+            background: #eee4e3;
+            border-radius: 999px;
+            overflow: hidden;
+            margin-bottom: 20px;
+        }
+
+        .progress-bar {
+            height: 100%;
+            background: var(--mint-strong);
+            border-radius: inherit;
+            width: 0;
+            transition: width .25s;
+        }
+
+        .question {
+            font-family: "Baloo 2", sans-serif;
+            font-size: 30px;
+            line-height: 1.2;
+            margin-bottom: 20px;
+        }
+
+        .options {
+            display: grid;
+            gap: 10px;
+        }
+
+        .option {
+            text-align: left;
+            border: 1.5px solid #eadfe1;
+            background: white;
+            padding: 14px 16px;
+            border-radius: 16px;
+            color: var(--brown);
+            font-weight: 700;
+        }
+
+        .option:hover { border-color: var(--mint-strong); background: #f4fbfa; }
+        .option.correct { border-color: #78b995; background: #ecf8f0; }
+        .option.wrong { border-color: #e58b9c; background: #fff0f3; }
+
+        .quiz-bottom {
+            margin-top: 18px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .quiz-result {
+            display: none;
+            text-align: center;
+            padding: 40px;
+            background: #fff;
+            border-radius: 28px;
+            box-shadow: var(--shadow);
+        }
+
+        .quiz-result.show { display: block; }
+
+        .score {
+            font-family: "Baloo 2", sans-serif;
+            font-size: 56px;
+            color: var(--mint-strong);
+            margin: 8px 0;
+        }
+
+        /* Modal */
+        .modal {
+            position: fixed;
+            inset: 0;
+            background: rgba(72, 55, 55, .35);
+            backdrop-filter: blur(4px);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            z-index: 50;
+        }
+
+        .modal.show { display: flex; }
+
+        .modal-box {
+            width: min(520px, 100%);
+            background: var(--cream);
+            border-radius: 26px;
+            padding: 25px;
+            box-shadow: 0 25px 70px rgba(55,40,40,.25);
+        }
+
+        .modal-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 16px;
+        }
+
+        .modal-header h3 { margin: 0; font-family: "Baloo 2", sans-serif; font-size: 28px; }
+
+        .close-modal {
+            border: 0;
+            background: #f3e8e8;
+            width: 35px;
+            height: 35px;
+            border-radius: 50%;
+            font-weight: 900;
+        }
+
+        .modal-actions {
+            display: flex;
+            justify-content: flex-end;
+            gap: 8px;
+            margin-top: 18px;
+        }
+
+        .toast {
+            position: fixed;
+            right: 20px;
+            bottom: 20px;
+            z-index: 80;
+            padding: 13px 17px;
+            border-radius: 14px;
+            background: var(--brown);
+            color: white;
+            box-shadow: var(--shadow);
+            transform: translateY(20px);
+            opacity: 0;
+            pointer-events: none;
+            transition: .25s;
+        }
+
+        .toast.show { opacity: 1; transform: translateY(0); }
+
+        footer {
+            padding: 30px 0 45px;
+            border-top: 1px solid rgba(92,74,74,.08);
+            color: var(--brown-soft);
+            text-align: center;
+            font-size: 13px;
+        }
+
+        @media (max-width: 900px) {
+            .hero { grid-template-columns: 1fr; }
+            .hero-art { min-height: 300px; }
+            .panel-grid, .bookmark-grid { grid-template-columns: 1fr; }
+            .nav-links { display: none; }
+        }
+
+        @media (max-width: 650px) {
+            .container { width: min(100% - 24px, 1180px); }
+            .navbar { min-height: 68px; }
+            .brand { font-size: 23px; }
+            .brand-mark { width: 40px; height: 40px; }
+            .nav-cta { padding: 10px 15px; }
+            .hero { padding-top: 38px; }
+            .hero h1 { font-size: 45px; }
+            .hero-art { min-height: 360px; align-items: flex-end; padding-bottom: 60px; }
+            .cat { transform: scale(.7); }
+            .mini-card { font-size: 12px; padding: 10px 12px; }
+            .mini-card strong { font-size: 14px; }
+            .money-card { top: 12px; left: 12px; }
+            .link-card { top: 12px; right: 12px; }
+            .tabs { width: 100%; overflow-x: auto; }
+            .tab-btn { flex: 1; white-space: nowrap; }
+            .summary { grid-template-columns: 1fr; }
+            .toolbar input, .toolbar select { flex-basis: 100%; }
+            .item { align-items: flex-start; flex-direction: column; }
+            .actions { width: 100%; }
+            .actions .icon-btn { flex: 1; }
+            .section-heading { align-items: flex-start; flex-direction: column; }
+        }
+    </style>
+</head>
+
+<body>
+<header>
+    <div class="container navbar">
+        <a class="brand" href="#beranda">
+            <span class="brand-mark">
+                <svg viewBox="0 0 46 46" width="26" height="26" aria-hidden="true">
+                    <path d="M12 14 L16 4 L21 13 Z" fill="#5c4a4a"/>
+                    <path d="M34 14 L30 4 L25 13 Z" fill="#5c4a4a"/>
+                    <circle cx="23" cy="21" r="14" fill="#fffaf7" stroke="#5c4a4a" stroke-width="2.4"/>
+                    <circle cx="18" cy="20" r="1.6" fill="#5c4a4a"/>
+                    <circle cx="28" cy="20" r="1.6" fill="#5c4a4a"/>
+                    <path d="M20 26 Q23 29 26 26" fill="none" stroke="#5c4a4a" stroke-width="1.8" stroke-linecap="round"/>
+                </svg>
+            </span>
+            <span>LinkVault</span>
+        </a>
+
+        <nav class="nav-links" id="mainNav">
+            <a href="#beranda" data-nav="beranda" class="active">Beranda</a>
+            <a href="#app" data-nav="app">Fitur</a>
+            <a href="#tentang" data-nav="tentang">Tentang</a>
+        </nav>
+
+        <button class="nav-cta" id="startAppBtn">Mulai Sekarang →</button>
+    </div>
+</header>
+
+<section class="container hero" id="beranda">
+    <div>
+        <div class="scribble">Satu aplikasi, banyak hal baik</div>
+        <h1>Atur Keuangan,<br>Kelola Tautan,<br><span>dan Uji Ilmu Kamu!</span></h1>
+        <p>
+            LinkVault adalah aplikasi web sederhana untuk mencatat keuangan,
+            menyimpan tautan favorit, dan bermain kuis interaktif dalam satu tempat.
+        </p>
+        <div class="hero-actions">
+            <button class="btn btn-primary" id="heroStartBtn">Mulai Sekarang →</button>
+            <button class="btn btn-secondary" id="heroFeatureBtn">Lihat Fitur</button>
+        </div>
+    </div>
+
+    <div class="hero-art">
+        <div class="mini-card money-card">
+            Keuangan
+            <strong id="heroBalance">Rp 0</strong>
+            Saldo tersedia
+        </div>
+
+        <div class="mini-card link-card">
+            Tautan Favorit
+            <strong id="heroLinkCount">0 tersimpan</strong>
+            Link pentingmu
+        </div>
+
+        <div class="cat">
+            <div class="cat-face">
+                <span class="eyes">• •</span>
+                <span class="nose">⌣</span>
+                <span class="cheek left"></span>
+                <span class="cheek right"></span>
+            </div>
+        </div>
+
+        <div class="laptop">♡</div>
+    </div>
+</section>
+
+<main id="app">
+    <div class="container">
+        <div class="section-heading">
+            <div>
+                <div class="scribble">Fitur utama</div>
+                <h2>Semua yang kamu butuhkan,<br>di satu aplikasi.</h2>
+                <p>Pilih tab dan coba fitur JavaScript-nya.</p>
+            </div>
+        </div>
+
+        <div class="tabs" role="tablist">
+            <button class="tab-btn active" data-tab="expense" id="tab-expense" role="tab" aria-selected="true" aria-controls="expense-panel">Catatan Keuangan</button>
+            <button class="tab-btn" data-tab="bookmark" id="tab-bookmark" role="tab" aria-selected="false" aria-controls="bookmark-panel">Manajemen Tautan</button>
+            <button class="tab-btn" data-tab="quiz" id="tab-quiz" role="tab" aria-selected="false" aria-controls="quiz-panel">Kuis Interaktif</button>
+        </div>
+
+        <!-- Expense Tracker -->
+        <section class="panel active" id="expense-panel" role="tabpanel" aria-labelledby="tab-expense">
+            <div class="panel-grid">
+                <div class="card">
+                    <h3>Tambah Transaksi</h3>
+                    <p class="card-subtitle">Catat pemasukan atau pengeluaran harian.</p>
+
+                    <form id="expenseForm">
+                        <div class="form-group">
+                            <label for="expenseTitle">Judul / Deskripsi</label>
+                            <input id="expenseTitle" required placeholder="Contoh: Makan siang">
+                        </div>
+
+                        <div class="form-group">
+                            <label for="expenseCategory">Kategori</label>
+                            <select id="expenseCategory" required>
+                                <option value="">Pilih kategori</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="expenseAmount">Jumlah</label>
+                            <input id="expenseAmount" type="number" min="1" required placeholder="50000">
+                        </div>
+
+                        <div class="form-group">
+                            <label for="expenseType">Tipe</label>
+                            <select id="expenseType" required>
+                                <option value="">Pilih tipe</option>
+                                <option value="income">Pemasukan</option>
+                                <option value="expense">Pengeluaran</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="expenseDate">Tanggal</label>
+                            <input id="expenseDate" type="date" required>
+                        </div>
+
+                        <button class="btn btn-primary" type="submit">+ Simpan Transaksi</button>
+                    </form>
+                </div>
+
+                <div>
+                    <div class="summary">
+                        <div class="summary-item">
+                            <small>Total Pemasukan</small>
+                            <strong id="totalIncome">Rp 0</strong>
+                        </div>
+                        <div class="summary-item">
+                            <small>Total Pengeluaran</small>
+                            <strong id="totalExpense">Rp 0</strong>
+                        </div>
+                        <div class="summary-item">
+                            <small>Saldo</small>
+                            <strong id="balance">Rp 0</strong>
+                        </div>
+                    </div>
+
+                    <div class="card">
+                        <div class="toolbar">
+                            <input id="expenseSearch" placeholder="Cari transaksi...">
+                            <select id="expenseFilter">
+                                <option value="all">Semua tipe</option>
+                                <option value="income">Pemasukan</option>
+                                <option value="expense">Pengeluaran</option>
+                            </select>
+                            <select id="expenseFilterCategory">
+                                <option value="all">Semua kategori</option>
+                            </select>
+                        </div>
+
+                        <div class="sort-row" id="expenseSort" role="group" aria-label="Urutkan transaksi">
+                            <span class="sort-label">Urutkan:</span>
+                            <button type="button" class="chip active" data-sort="newest" aria-pressed="true">Terbaru</button>
+                            <button type="button" class="chip" data-sort="oldest" aria-pressed="false">Terlama</button>
+                            <button type="button" class="chip" data-sort="high" aria-pressed="false">Jumlah terbesar</button>
+                            <button type="button" class="chip" data-sort="low" aria-pressed="false">Jumlah terkecil</button>
+                        </div>
+
+                        <div class="items" id="expenseList"></div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Bookmark -->
+        <section class="panel" id="bookmark-panel" role="tabpanel" aria-labelledby="tab-bookmark">
+            <div class="bookmark-grid">
+                <div class="card">
+                    <h3>Simpan Tautan</h3>
+                    <p class="card-subtitle">Simpan website yang sering kamu butuhkan.</p>
+
+                    <form id="bookmarkForm">
+                        <div class="form-group">
+                            <label for="bookmarkTitle">Nama / Judul</label>
+                            <input id="bookmarkTitle" required placeholder="Contoh: Google Drive">
+                        </div>
+
+                        <div class="form-group">
+                            <label for="bookmarkUrl">URL</label>
+                            <input id="bookmarkUrl" required placeholder="https://drive.google.com">
+                        </div>
+
+                        <div class="form-group">
+                            <label for="bookmarkCategory">Kategori</label>
+                            <input id="bookmarkCategory" required placeholder="Kuliah">
+                        </div>
+
+                        <div class="form-group">
+                            <label for="bookmarkNote">Catatan</label>
+                            <textarea id="bookmarkNote" placeholder="Catatan singkat (opsional)"></textarea>
+                        </div>
+
+                        <button class="btn btn-primary" type="submit">+ Simpan Tautan</button>
+                    </form>
+                </div>
+
+                <div class="card">
+                    <div class="toolbar">
+                        <input id="bookmarkSearch" placeholder="Cari nama, URL, kategori...">
+                    </div>
+
+                    <div class="sort-row" id="bookmarkSort" role="group" aria-label="Urutkan tautan">
+                        <span class="sort-label">Urutkan:</span>
+                        <button type="button" class="chip active" data-sort="newest" aria-pressed="true">Terbaru</button>
+                        <button type="button" class="chip" data-sort="az" aria-pressed="false">Judul A–Z</button>
+                        <button type="button" class="chip" data-sort="za" aria-pressed="false">Judul Z–A</button>
+                    </div>
+
+                    <div class="items" id="bookmarkList"></div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Quiz -->
+        <section class="panel" id="quiz-panel" role="tabpanel" aria-labelledby="tab-quiz">
+            <div class="quiz-wrap">
+                <div class="quiz-start" id="quizStart">
+                    <div class="quiz-face">♡</div>
+                    <h3>Kuis JavaScript Santai</h3>
+                    <p>Jawab <span id="quizTotalText">5</span> soal dasar JavaScript dan lihat apakah skor terbaikmu bisa bertahan.</p>
+                    <p><strong>High Score: <span id="highScoreStart">0/5</span></strong></p>
+                    <button class="btn btn-primary" id="startQuizBtn">Mulai Kuis</button>
+                </div>
+
+                <div class="card quiz-box" id="quizBox">
+                    <div class="progress"><div class="progress-bar" id="quizProgress"></div></div>
+                    <div class="quiz-meta">
+                        <div class="item-meta" id="quizNumber">Soal 1 dari 5</div>
+                        <div class="quiz-timer" id="quizTimer"></div>
+                    </div>
+                    <div class="question" id="quizQuestion"></div>
+                    <div class="options" id="quizOptions"></div>
+
+                    <div class="quiz-bottom">
+                        <span id="quizFeedback" aria-live="polite"></span>
+                        <button class="btn btn-primary" id="nextQuizBtn" disabled>Berikutnya →</button>
+                    </div>
+                </div>
+
+                <div class="quiz-result" id="quizResult">
+                    <div class="scribble">Kuis selesai!</div>
+                    <h3>Hasil kamu</h3>
+                    <div class="score" id="finalScore">0/5</div>
+                    <p id="scoreMessage"></p>
+                    <p><strong>High Score: <span id="highScoreResult">0/5</span></strong></p>
+                    <button class="btn btn-primary" id="retryQuizBtn">Main Lagi</button>
+                </div>
+            </div>
+        </section>
+    </div>
+</main>
+
+<section class="container" id="tentang" style="padding: 10px 0 60px;">
+    <div class="card" style="max-width:680px;">
+        <div class="scribble">Tentang</div>
+        <h3 style="margin-top:2px;">Tentang LinkVault</h3>
+        <p class="card-subtitle" style="margin-bottom:0; line-height:1.8;">
+            Hai, ini LinkVault! ♡<br>
+            Tempat kecil untuk menyimpan, mencatat, dan bersenang-senang.<br><br>
+            💸 Catat pengeluaranmu<br>
+            🔗 Simpan tautan favoritmu<br>
+            🧠 Uji pengetahuanmu lewat kuis<br><br>
+            Semua fitur dirancang menjadi satu aplikasi web interaktif dengan bantuan JavaScript,
+            manipulasi DOM, penanganan event, dan localStorage.<br>
+            Dibuat untuk Praktikum 3 PABWE — 2026 dengan satu tujuan sederhana:<br>
+            “Biar ngodingnya serius, tapi tampilannya tetap gemas.” ♡
+        </p>
+    </div>
+</section>
+
+<footer>
+    <div class="container">
+        LinkVault ♡ — Catat, simpan, dan eksplor lebih seru.<br>
+        Proyek kecil yang dibuat dengan kode, kreativitas, dan banyak ♡ · PABWE P3 · 2026
+    </div>
+</footer>
+
+<!-- Modal -->
+<div class="modal" id="modal" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+    <div class="modal-box">
+        <div class="modal-header">
+            <h3 id="modalTitle">Ubah Data</h3>
+            <button class="close-modal" id="closeModal" type="button" aria-label="Tutup">×</button>
+        </div>
+
+        <form id="editForm"></form>
+
+        <div class="modal-actions">
+            <button class="btn btn-secondary" id="cancelModal" type="button">Batal</button>
+            <button class="btn btn-primary" id="saveModal" type="button">Simpan Perubahan</button>
+        </div>
+    </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script src="assets/script.js"></script>
+</body>
+</html>
