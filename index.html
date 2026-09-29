@@ -218,8 +218,8 @@
         .chip.active { background: var(--mint); border-color: var(--mint-strong); }
 
         .quiz-meta { display: flex; justify-content: space-between; align-items: center; }
-        .quiz-timer { font-weight: 800; font-size: 13px; color: var(--pink-strong); }
-        .quiz-timer.low { color: var(--danger); }
+        .quiz-timer { font-weight: 800; font-size: 13px; color: #b9385f; }
+        .quiz-timer.low { color: #b92e2e; }
         .delete-confirm-text { line-height: 1.6; margin: 0; }
 
         .hero-art {
@@ -471,8 +471,8 @@
         .item-title { font-weight: 800; margin-bottom: 4px; }
         .item-meta { color: var(--brown-soft); font-size: 13px; }
         .amount { font-weight: 900; white-space: nowrap; }
-        .income { color: #5a9d78; }
-        .expense { color: #d77b8e; }
+        .income { color: #2f6e4a; }
+        .expense { color: #a8425a; }
 
         .badge {
             display: inline-block;
@@ -485,8 +485,8 @@
             font-weight: 800;
         }
 
-        .badge.type-income { background: #e4f5ea; color: #3f7d5a; }
-        .badge.type-expense { background: #fde8ee; color: #b9566b; }
+        .badge.type-income { background: #e4f5ea; color: #256640; }
+        .badge.type-expense { background: #fde8ee; color: #96334c; }
 
         .actions { display: flex; gap: 9px; flex-wrap: wrap; justify-content: flex-end; }
 
@@ -717,11 +717,12 @@
             box-shadow: var(--shadow);
             transform: translateY(20px);
             opacity: 0;
+            visibility: hidden;
             pointer-events: none;
-            transition: .25s;
+            transition: opacity .25s, transform .25s, visibility .25s;
         }
 
-        .toast.show { opacity: 1; transform: translateY(0); }
+        .toast.show { opacity: 1; visibility: visible; transform: translateY(0); }
 
         footer {
             padding: 30px 0 45px;
@@ -791,7 +792,7 @@
     </div>
 </header>
 
-<section class="container hero" id="beranda">
+<section class="container hero" id="beranda" aria-label="Beranda">
     <div>
         <div class="scribble">Satu aplikasi, banyak hal baik</div>
         <h1>Atur Keuangan,<br>Kelola Tautan,<br><span>dan Uji Ilmu Kamu!</span></h1>
@@ -1021,7 +1022,7 @@
     </div>
 </main>
 
-<section class="container" id="tentang" style="padding: 10px 0 60px;">
+<section class="container" id="tentang" aria-label="Tentang" style="padding: 10px 0 60px;">
     <div class="card" style="max-width:680px;">
         <div class="scribble">Tentang</div>
         <h3 style="margin-top:2px;">Tentang LinkVault</h3>
@@ -1057,7 +1058,7 @@
     </div>
 </div>
 
-<div class="toast" id="toast"></div>
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
 
 <script src="assets/script.js"></script>
 </body>

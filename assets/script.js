@@ -860,10 +860,10 @@ function answerQuestion(selectedIndex) {
     if (isCorrect) {
         quizScore++;
         quizFeedback.textContent = "Jawaban benar!";
-        quizFeedback.style.color = "#5a9d78";
+        quizFeedback.style.color = "#2f6e4a";
     } else {
         quizFeedback.textContent = selectedIndex === -1 ? "Waktu habis." : "Belum tepat.";
-        quizFeedback.style.color = "#d77b8e";
+        quizFeedback.style.color = "#a8425a";
     }
 
     nextQuizBtn.disabled = false;
