@@ -139,8 +139,10 @@ tabButtons.forEach((button) => {
     button.addEventListener("click", () => openTab(button.dataset.tab));
 });
 
-// Pulihkan tab terakhir yang dibuka saat halaman dimuat ulang
-openTab(localStorage.getItem(STORAGE.activeTab) || "expense");
+// Pulihkan tab terakhir yang dibuka saat halaman dimuat ulang.
+// Prioritas: ?tab= di URL (untuk deep-link / audit per halaman) > localStorage > default.
+const tabFromUrl = new URLSearchParams(window.location.search).get("tab");
+openTab(TAB_NAMES.includes(tabFromUrl) ? tabFromUrl : (localStorage.getItem(STORAGE.activeTab) || "expense"));
 
 /* ================================================================== */
 /* ============================ TOAST ================================= */
