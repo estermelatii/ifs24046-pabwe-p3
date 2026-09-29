@@ -10,14 +10,18 @@
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;600;700&family=Nunito:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="preload" as="style"
+          href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@600;700&family=Nunito:wght@400;600;700;800&display=swap"
+          onload="this.onload=null;this.rel='stylesheet'">
+    <noscript><link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@600;700&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet"></noscript>
 
     <style>
         :root {
             --cream: #fffaf5;
             --white: #ffffff;
             --brown: #5c4a4a;
-            --brown-soft: #806d6d;
+            --brown-soft: #665252;
+            --mint-text: #1c7562;
             --pink: #f7c9d8;
             --pink-strong: #ee91b2;
             --mint: #cdebe6;
@@ -59,7 +63,7 @@
             top: 0;
             z-index: 20;
             background: rgba(255, 250, 245, 0.88);
-            backdrop-filter: blur(14px);
+            backdrop-filter: blur(8px);
             border-bottom: 1px solid rgba(92, 74, 74, 0.06);
         }
 
@@ -155,7 +159,7 @@
         }
 
         .hero h1 span {
-            color: var(--mint-strong);
+            color: var(--mint-text);
             display: block;
         }
 
@@ -203,7 +207,8 @@
             background: #fff;
             color: var(--brown);
             border-radius: 999px;
-            padding: 7px 14px;
+            padding: 10px 16px;
+            min-height: 40px;
             font-size: 13px;
             font-weight: 800;
             transition: background .18s, border-color .18s;
@@ -426,7 +431,7 @@
         .summary-item:nth-child(2) { background: #fff0f4; }
         .summary-item:nth-child(3) { background: #fff8df; }
 
-        .summary-item small { color: var(--brown-soft); }
+        .summary-item small { color: var(--brown); font-weight: 700; }
         .summary-item strong { display: block; margin-top: 5px; font-size: 20px; }
 
         .toolbar {
@@ -483,14 +488,15 @@
         .badge.type-income { background: #e4f5ea; color: #3f7d5a; }
         .badge.type-expense { background: #fde8ee; color: #b9566b; }
 
-        .actions { display: flex; gap: 7px; flex-wrap: wrap; justify-content: flex-end; }
+        .actions { display: flex; gap: 9px; flex-wrap: wrap; justify-content: flex-end; }
 
         .icon-btn {
             border: 0;
             background: #f7f1ef;
             color: var(--brown);
             border-radius: 10px;
-            padding: 8px 11px;
+            padding: 11px 15px;
+            min-height: 42px;
             font-weight: 800;
         }
 
@@ -646,7 +652,7 @@
         .score {
             font-family: "Baloo 2", sans-serif;
             font-size: 56px;
-            color: var(--mint-strong);
+            color: var(--mint-text);
             margin: 8px 0;
         }
 
@@ -685,10 +691,11 @@
         .close-modal {
             border: 0;
             background: #f3e8e8;
-            width: 35px;
-            height: 35px;
+            width: 44px;
+            height: 44px;
             border-radius: 50%;
             font-weight: 900;
+            font-size: 18px;
         }
 
         .modal-actions {
@@ -980,7 +987,7 @@
             <div class="quiz-wrap">
                 <div class="quiz-start" id="quizStart">
                     <div class="quiz-face">♡</div>
-                    <h3>YUK KUIS YUK</h3>
+                    <h3>Kuis JavaScript Santai</h3>
                     <p>Jawab <span id="quizTotalText">5</span> soal dasar JavaScript dan lihat apakah skor terbaikmu bisa bertahan.</p>
                     <p><strong>High Score: <span id="highScoreStart">0/5</span></strong></p>
                     <button class="btn btn-primary" id="startQuizBtn">Mulai Kuis</button>
@@ -1018,23 +1025,18 @@
     <div class="card" style="max-width:680px;">
         <div class="scribble">Tentang</div>
         <h3 style="margin-top:2px;">Tentang LinkVault</h3>
-        <p class="card-subtitle" style="margin-bottom:0; line-height:1.8;">
-            Hai, ini LinkVault! ♡<br>
-            Tempat kecil untuk menyimpan, mencatat, dan bersenang-senang.<br><br>
-            💸 Catat pengeluaranmu<br>
-            🔗 Simpan tautan favoritmu<br>
-            🧠 Uji pengetahuanmu lewat kuis<br><br>
-            Semua fitur dirancang menjadi satu aplikasi web interaktif dengan bantuan JavaScript,
-            manipulasi DOM, penanganan event, dan localStorage.<br>
-            “Biar ngodingnya serius, tapi tampilannya tetap gemas.” ♡
+        <p class="card-subtitle" style="margin-bottom:0;">
+            LinkVault dibuat sebagai studi kasus Praktikum 3 mata kuliah PABWE — proyek satu halaman
+            berbasis JavaScript murni tanpa backend. Tiga fitur di atas (Catatan Keuangan, Manajemen
+            Tautan, dan Kuis Interaktif) menunjukkan manipulasi DOM, penanganan event, dan penyimpanan
+            data lewat <code>localStorage</code> agar tetap tersimpan meski browser ditutup.
         </p>
     </div>
 </section>
 
 <footer>
     <div class="container">
-        LinkVault ♡ — Catat, simpan, dan eksplor lebih seru.<br>
-        Proyek kecil yang dibuat dengan kode, kreativitas, dan banyak ♡ · PABWE P3 · 2026
+        LinkVault · Dibuat untuk Praktikum PABWE P3 · 2026
     </div>
 </footer>
 
