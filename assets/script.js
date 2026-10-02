@@ -23,8 +23,7 @@ function $all(selector) {
 const STORAGE = {
     expenses: "linkvault_expenses",
     bookmarks: "linkvault_bookmarks",
-    highScore: "linkvault_high_score",
-    activeTab: "linkvault_active_tab"
+    highScore: "linkvault_high_score"
 };
 
 /** Baca JSON dari localStorage; jika kosong / rusak kembalikan fallback */
@@ -116,7 +115,7 @@ const tabButtons = $all(".tab-btn");
 const panels = $all(".panel");
 const TAB_NAMES = ["expense", "bookmark", "quiz"];
 
-/** Ganti tab aktif: hanya satu panel tampil, lalu ingat pilihan di localStorage */
+/** Ganti tab aktif: hanya satu panel tampil, lalu refleksikan ke URL */
 function openTab(tabName) {
     if (!TAB_NAMES.includes(tabName)) tabName = "expense";
 
@@ -130,19 +129,21 @@ function openTab(tabName) {
         panel.classList.toggle("active", panel.id === `${tabName}-panel`);
     });
 
-    try {
-        localStorage.setItem(STORAGE.activeTab, tabName);
-    } catch { /* abaikan jika storage tidak tersedia */ }
+    // URL adalah satu-satunya sumber state tab aktif (bukan localStorage).
+    // Pakai replaceState agar tidak menumpuk entri history setiap kali pindah tab.
+    const url = new URL(window.location.href);
+    url.searchParams.set("tab", tabName);
+    history.replaceState(null, "", url);
 }
 
 tabButtons.forEach((button) => {
     button.addEventListener("click", () => openTab(button.dataset.tab));
 });
 
-// Pulihkan tab terakhir yang dibuka saat halaman dimuat ulang.
-// Prioritas: ?tab= di URL (untuk deep-link / audit per halaman) > localStorage > default.
+// Tab aktif dipulihkan murni dari query string URL (?tab=expense|bookmark|quiz).
+// Validasi: hanya nilai yang ada di TAB_NAMES yang dipercaya; selain itu jatuh ke default.
 const tabFromUrl = new URLSearchParams(window.location.search).get("tab");
-openTab(TAB_NAMES.includes(tabFromUrl) ? tabFromUrl : (localStorage.getItem(STORAGE.activeTab) || "expense"));
+openTab(TAB_NAMES.includes(tabFromUrl) ? tabFromUrl : "expense");
 
 /* ================================================================== */
 /* ============================ TOAST ================================= */
@@ -765,7 +766,7 @@ const nextQuizBtn = $("#nextQuizBtn");
 $("#quizTotalText").textContent = questions.length;
 
 function getHighScore() {
-    return Number(localStorage.getItem(STORAGE.highScore)) || 0;
+    return loadJSON(STORAGE.highScore, 0);
 }
 
 /** Tampilkan high score (mis. "4/5") di layar mulai & hasil */
@@ -888,7 +889,7 @@ function finishQuiz() {
     $("#finalScore").textContent = `${quizScore}/${questions.length}`;
 
     const isNewRecord = quizScore > getHighScore();
-    if (isNewRecord) localStorage.setItem(STORAGE.highScore, quizScore);
+    if (isNewRecord) saveJSON(STORAGE.highScore, quizScore);
 
     let message = "Bagus. Coba lagi untuk mendapatkan skor yang lebih tinggi.";
     if (quizScore === questions.length) message = "Mantap, semua jawaban benar!";
